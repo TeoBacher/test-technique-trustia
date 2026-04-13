@@ -16,9 +16,9 @@ PHRASES_DB = {
 
 # The order and selection of lines
 DISPLAY_STRUCTURE = [
-    ["clean_code"],            # Bloc 1
-    ["test_often"],            # Bloc 2
-    ["simplicity", "refactor"] # Bloc 3
+    ["clean_code"],            # Block 1
+    ["test_often"],            # Block 2
+    ["simplicity", "refactor"] # Block 3
 ]
 
 def format_line(texte, largeur):
@@ -30,6 +30,16 @@ def format_line(texte, largeur):
         texte_clean = texte_clean[:available_space - 3] + "..."
         
     return f"|{texte_clean.rjust(available_space)}|"
+
+def generate_display(structure, db, width):
+    """Displays the text blocks with borders according to the configuration."""
+    for bloc in structure:
+        print("-" * width)
+        for cle in bloc:
+            if cle in db:
+                print(format_line(db[cle], width))
+        print("-" * width)
+        print()
 
 # TESTS
 
@@ -49,3 +59,5 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test":
         sys.argv.pop()
         unittest.main()
+    else:
+        generate_display(DISPLAY_STRUCTURE, PHRASES_DB, MAX_WIDTH)
