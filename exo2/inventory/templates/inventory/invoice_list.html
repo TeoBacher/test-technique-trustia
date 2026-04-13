@@ -1,0 +1,59 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Factures{% endblock %}
+
+{% block content %}
+<div class="header-bar">
+    <h1>Factures</h1>
+    <a href="{% url 'invoice-create' %}" class="btn btn-success">+ Nouvelle facture</a>
+</div>
+
+{% if invoices %}
+<table>
+    <thead>
+        <tr>
+            <th>N° Facture</th>
+            <th>Date de création</th>
+            <th>Nb articles</th>
+            <th>Total</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for invoice in invoices %}
+        <tr>
+            <td>Facture n°{{ invoice.id }}</td>
+            <td>{{ invoice.created_at|date:"d/m/Y H:i" }}</td>
+            <td>{{ invoice.total_items }}</td>
+            <td>{{ invoice.total_price }} €</td>
+            <td>
+                <a href="{% url 'invoice-detail' invoice.pk %}" class="btn btn-primary btn-sm">Voir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; Première</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Précédente</a>
+    {% endif %}
+    <span class="current">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Suivante</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Dernière &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <p>Aucune facture pour l'instant.</p>
+        <a href="{% url 'invoice-create' %}" class="btn btn-success" style="margin-top: 1rem;">Créer la première facture</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

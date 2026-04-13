@@ -1,0 +1,46 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Facture n°{{ invoice.id }}{% endblock %}
+
+{% block content %}
+<div class="header-bar">
+    <h1>Facture n°{{ invoice.id }}</h1>
+    <a href="{% url 'invoice-list' %}" class="btn btn-secondary">← Retour aux factures</a>
+</div>
+
+<div class="card">
+    <p style="color: #777; margin-bottom: 1.5rem;">Créée le {{ invoice.created_at|date:"d/m/Y à H:i" }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Prix unitaire</th>
+                <th>Quantité</th>
+                <th>Sous-total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in invoice.invoiceitem_set.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.product.price }} €</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.get_cost }} €</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 1.5rem; margin-top: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #dee2e6;">
+            <span>Nombre total d'articles</span>
+            <span>{{ invoice.total_items }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.75rem 0 0; font-weight: bold; font-size: 1.1rem; color: #2c3e50;">
+            <span>Total à payer</span>
+            <span>{{ invoice.total_price }} €</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
