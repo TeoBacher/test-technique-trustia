@@ -21,11 +21,17 @@ DISPLAY_STRUCTURE = [
     ["simplicity", "refactor"] # Bloc 3
 ]
 
-# TESTS
+def format_line(texte, largeur):
+    """Set up a line -> lowercase letters, right-aligned, and with side margins."""
+    texte_clean = texte.lower()
+    available_space = largeur - 2
+    
+    if len(texte_clean) > available_space:
+        texte_clean = texte_clean[:available_space - 3] + "..."
+        
+    return f"|{texte_clean.rjust(available_space)}|"
 
-def format_line(text, max_width):
-    """Formats a text to a specific width."""
-    return text.ljust(max_width)
+# TESTS
 
 class TestExercice(unittest.TestCase):
     def test_exact_width(self):
