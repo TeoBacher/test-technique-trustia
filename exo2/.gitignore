@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environnement virtuel
+venv/
+env/
+ENV/
+
+# Base de données locale (SQLite)
+# On ne la versionne pas car elle contient tes données de test perso
+*.sqlite3
+
+# Fichiers de configuration IDE
+.vscode/
+.idea/
+
+# Fichiers statiques et média collectés
+staticfiles/
+media/
+
+# Fichiers de log
+*.log
+.env
