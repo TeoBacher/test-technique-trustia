@@ -1,0 +1,60 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Produits{% endblock %}
+
+{% block content %}
+<div class="header-bar">
+    <h1>Produits</h1>
+    <a href="{% url 'product-create' %}" class="btn btn-success">+ Nouveau produit</a>
+</div>
+
+{% if products %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Prix</th>
+            <th>Date de péremption</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product.id }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.price }} €</td>
+            <td>{{ product.expiration_date|date:"d/m/Y" }}</td>
+            <td class="actions">
+                <a href="{% url 'product-update' product.pk %}" class="btn btn-warning btn-sm">Modifier</a>
+                <a href="{% url 'product-delete' product.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; Première</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Précédente</a>
+    {% endif %}
+    <span class="current">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Suivante</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Dernière &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <p>Aucun produit pour l'instant.</p>
+        <a href="{% url 'product-create' %}" class="btn btn-success" style="margin-top: 1rem;">Créer le premier produit</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

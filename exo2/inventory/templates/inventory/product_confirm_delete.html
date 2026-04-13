@@ -1,0 +1,19 @@
+{% extends 'inventory/base.html' %}
+
+{% block title %}Supprimer le produit{% endblock %}
+
+{% block content %}
+<h1>Supprimer le produit</h1>
+
+<div class="card">
+    <p>Voulez-vous vraiment supprimer <strong>{{ object.name }}</strong> ?</p>
+    <p style="color: #e74c3c; font-size: 0.9rem; margin-top: 0.5rem;">Cette action est irréversible.</p>
+    <form method="post" style="margin-top: 1.5rem;">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+            <a href="{% url 'product-list' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
