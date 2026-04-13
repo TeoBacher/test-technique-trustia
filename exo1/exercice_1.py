@@ -1,3 +1,6 @@
+import unittest
+import sys
+
 #Conf
 MAX_WIDTH = 100
 
@@ -17,3 +20,26 @@ DISPLAY_STRUCTURE = [
     ["test_often"],            # Bloc 2
     ["simplicity", "refactor"] # Bloc 3
 ]
+
+# TESTS
+
+def format_line(text, max_width):
+    """Formats a text to a specific width."""
+    return text.ljust(max_width)
+
+class TestExercice(unittest.TestCase):
+    def test_exact_width(self):
+        """Check that the line is exactly 100 characters long."""
+        ligne = format_line("test", MAX_WIDTH)
+        self.assertEqual(len(ligne), MAX_WIDTH)
+
+    def test_exclusion_rule(self):
+        """Check that the excluded phrases are not in the display structure."""
+        cles_utilisees = [cle for bloc in DISPLAY_STRUCTURE for cle in bloc]
+        self.assertNotIn("no_display", cles_utilisees)
+        self.assertNotIn("simple_clear", cles_utilisees)
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "test":
+        sys.argv.pop()
+        unittest.main()
