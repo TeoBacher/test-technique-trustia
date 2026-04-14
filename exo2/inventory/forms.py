@@ -18,11 +18,29 @@ class ProductForm(forms.ModelForm):
             raise forms.ValidationError("La date de péremption ne peut pas être dans le passé.")
         return date
 
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price is not None and price <= 0:
+            raise forms.ValidationError("Le prix doit être supérieur à 0.")
+        return price
+
+
+class InvoiceItemForm(forms.ModelForm):
+    class Meta:
+        model = InvoiceItem
+        fields = ['product', 'quantity']
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data.get('quantity')
+        if quantity is not None and quantity < 1:
+            raise forms.ValidationError("La quantité doit être au moins 1.")
+        return quantity
+
 
 InvoiceItemFormSet = inlineformset_factory(
     Invoice,
     InvoiceItem,
-    fields=['product', 'quantity'],
+    form=InvoiceItemForm,
     extra=0,
     can_delete=True,
     min_num=1,
