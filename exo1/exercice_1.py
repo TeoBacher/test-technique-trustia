@@ -5,12 +5,19 @@ import sys
 MAX_WIDTH = 100
 
 PHRASES = {
-    "Le code propre facilite la maintenance":   {"block": [1],    "enabled": True},
-    "Tester souvent évite beaucoup d erreurs":   {"block": [2],    "enabled": True},
-    "Cette phrase ne doit pas s afficher":       {"block": [2, 3], "enabled": False},
-    "Un bon code doit rester simple et clair":   {"block": [3],    "enabled": False},
-    "La simplicité améliore la qualité du code": {"block": [3],    "enabled": True},
-    "Refactoriser améliore la compréhension":    {"block": [3],    "enabled": True},
+    1: {
+        "Le code propre facilite la maintenance":   True,
+    },
+    2: {
+        "Tester souvent évite beaucoup d erreurs":   True,
+        "Cette phrase ne doit pas s afficher":       False,
+    },
+    3: {
+        "Cette phrase ne doit pas s afficher":       False,
+        "Un bon code doit rester simple et clair":   False,
+        "La simplicité améliore la qualité du code": True,
+        "Refactoriser améliore la compréhension":    True,
+    },
 }
 
 
@@ -27,18 +34,13 @@ def format_line(text, width):
 
 def generate_display(phrases, width):
     """Display text blocks with borders according to the configuration."""
-    blocks = {}
-    for text, entry in phrases.items():
-        if entry["enabled"]:
-            for block in entry["block"]:
-                if block not in blocks:
-                    blocks[block] = []
-                blocks[block].append(text)
-
     separator = "-" * width
-    for block_num in sorted(blocks):
+    for block_num in phrases:
+        lines = [text for text, enabled in phrases[block_num].items() if enabled]
+        if not lines:
+            continue
         print(separator)
-        for text in blocks[block_num]:
+        for text in lines:
             print(format_line(text, width))
         print(separator)
         print()
@@ -59,12 +61,10 @@ class TestExercice(unittest.TestCase):
         self.assertNotIn("MAJUSCULES", ligne)
 
     def test_exclusion_rule(self):
-        """Check that the excluded phrases have enabled=False and keep their block."""
-        self.assertFalse(PHRASES["Cette phrase ne doit pas s afficher"]["enabled"])
-        self.assertIn(2, PHRASES["Cette phrase ne doit pas s afficher"]["block"])
-        self.assertIn(3, PHRASES["Cette phrase ne doit pas s afficher"]["block"])
-        self.assertFalse(PHRASES["Un bon code doit rester simple et clair"]["enabled"])
-        self.assertIn(3, PHRASES["Un bon code doit rester simple et clair"]["block"])
+        """Check that the excluded phrases have enabled=False in their block."""
+        self.assertFalse(PHRASES[2]["Cette phrase ne doit pas s afficher"])
+        self.assertFalse(PHRASES[3]["Cette phrase ne doit pas s afficher"])
+        self.assertFalse(PHRASES[3]["Un bon code doit rester simple et clair"])
 
     def test_excluded_phrases_not_displayed(self):
         """Check that disabled phrases do not appear in displayed blocks."""
