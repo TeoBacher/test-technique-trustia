@@ -1,63 +1,88 @@
 import unittest
 import sys
 
-#Conf
+# Conf
 MAX_WIDTH = 100
 
-# phrase dictionary
-PHRASES_DB = {
-    "clean_code": "Le code propre facilite la maintenance",
-    "test_often": "Tester souvent évite beaucoup d erreurs",
-    "no_display": "Cette phrase ne doit pas s afficher",       # Excluded
-    "simple_clear": "Un bon code doit rester simple et clair", # Excluded
-    "simplicity": "La simplicité améliore la qualité du code",
-    "refactor": "Refactoriser améliore la compréhension"
+PHRASES = {
+    "Le code propre facilite la maintenance":   {"block": [1],    "enabled": True},
+    "Tester souvent évite beaucoup d erreurs":   {"block": [2],    "enabled": True},
+    "Cette phrase ne doit pas s afficher":       {"block": [2, 3], "enabled": False},
+    "Un bon code doit rester simple et clair":   {"block": [3],    "enabled": False},
+    "La simplicité améliore la qualité du code": {"block": [3],    "enabled": True},
+    "Refactoriser améliore la compréhension":    {"block": [3],    "enabled": True},
 }
 
-# The order and selection of lines
-DISPLAY_STRUCTURE = [
-    ["clean_code"],            # Block 1
-    ["test_often"],            # Block 2
-    ["simplicity", "refactor"] # Block 3
-]
 
-def format_line(texte, largeur):
-    """Set up a line -> lowercase letters, right-aligned, and with side margins."""
-    texte_clean = texte.lower()
-    available_space = largeur - 2
-    
-    if len(texte_clean) > available_space:
-        texte_clean = texte_clean[:available_space - 3] + "..."
-        
-    return f"|{texte_clean.rjust(available_space)}|"
+def format_line(text, width):
+    """Format a line: lowercase, right-aligned with padding, framed with |."""
+    text_lower = text.lower()
+    inner_width = width - 4  # "| " + " |"
 
-def generate_display(structure, db, width):
-    """Displays the text blocks with borders according to the configuration."""
-    for bloc in structure:
-        print("-" * width)
-        for cle in bloc:
-            if cle in db:
-                print(format_line(db[cle], width))
-        print("-" * width)
+    if len(text_lower) > inner_width:
+        text_lower = text_lower[:inner_width - 3] + "..."
+
+    return f"| {text_lower.rjust(inner_width)} |"
+
+
+def generate_display(phrases, width):
+    """Display text blocks with borders according to the configuration."""
+    blocks = {}
+    for text, entry in phrases.items():
+        if entry["enabled"]:
+            for block in entry["block"]:
+                if block not in blocks:
+                    blocks[block] = []
+                blocks[block].append(text)
+
+    separator = "-" * width
+    for block_num in sorted(blocks):
+        print(separator)
+        for text in blocks[block_num]:
+            print(format_line(text, width))
+        print(separator)
         print()
+
 
 # TESTS
 
 class TestExercice(unittest.TestCase):
     def test_exact_width(self):
-        """Check that the line is exactly 100 characters long."""
+        """Check that the line is exactly MAX_WIDTH characters long."""
         ligne = format_line("test", MAX_WIDTH)
         self.assertEqual(len(ligne), MAX_WIDTH)
 
+    def test_lowercase(self):
+        """Check that text is rendered in lowercase."""
+        ligne = format_line("MAJUSCULES", MAX_WIDTH)
+        self.assertIn("majuscules", ligne)
+        self.assertNotIn("MAJUSCULES", ligne)
+
     def test_exclusion_rule(self):
-        """Check that the excluded phrases are not in the display structure."""
-        cles_utilisees = [cle for bloc in DISPLAY_STRUCTURE for cle in bloc]
-        self.assertNotIn("no_display", cles_utilisees)
-        self.assertNotIn("simple_clear", cles_utilisees)
+        """Check that the excluded phrases have enabled=False and keep their block."""
+        self.assertFalse(PHRASES["Cette phrase ne doit pas s afficher"]["enabled"])
+        self.assertIn(2, PHRASES["Cette phrase ne doit pas s afficher"]["block"])
+        self.assertIn(3, PHRASES["Cette phrase ne doit pas s afficher"]["block"])
+        self.assertFalse(PHRASES["Un bon code doit rester simple et clair"]["enabled"])
+        self.assertIn(3, PHRASES["Un bon code doit rester simple et clair"]["block"])
+
+    def test_excluded_phrases_not_displayed(self):
+        """Check that disabled phrases do not appear in displayed blocks."""
+        import io
+        from contextlib import redirect_stdout
+
+        f = io.StringIO()
+        with redirect_stdout(f):
+            generate_display(PHRASES, MAX_WIDTH)
+        output = f.getvalue()
+
+        self.assertNotIn("cette phrase ne doit pas s afficher", output)
+        self.assertNotIn("un bon code doit rester simple et clair", output)
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test":
         sys.argv.pop()
         unittest.main()
     else:
-        generate_display(DISPLAY_STRUCTURE, PHRASES_DB, MAX_WIDTH)
+        generate_display(PHRASES, MAX_WIDTH)
