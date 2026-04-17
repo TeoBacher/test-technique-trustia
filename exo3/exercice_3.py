@@ -37,3 +37,21 @@ class Menu:
                 print("-" * len(cat.value))
                 for item in visible_items:
                     print(item)
+    
+    def find_item(self, name):
+        """Finds a food object by its name (case insensitive)."""
+        return next((i for i in self.items if i.name.lower() == name.lower()), None)
+
+    def remove_item(self, name):
+        """Deletes an item from the menu."""
+        self.items = [i for i in self.items if i.name.lower() != name.lower()]
+
+    def update_price(self, name, new_price):
+        item = self.find_item(name)
+        if item:
+            item.price = new_price
+
+    def set_availability(self, name, status: bool):
+        item = self.find_item(name)
+        if item:
+            item.is_available = status
