@@ -15,3 +15,25 @@ class Food:
     def __str__(self):
         """Displays the name in lowercase and price with €."""
         return f"• {self.name.lower()} — {self.price}€"
+
+class Menu:
+    def __init__(self):
+        self.items = []
+
+    def add_item(self, food_item):
+        self.items.append(food_item)
+
+    def display(self):
+        print("--- RESTAURANT MENU ---")
+        for cat in Category:
+            # Filter only available items
+            visible_items = [
+                item for item in self.items 
+                if item.category == cat and item.is_available
+            ]
+            
+            if visible_items:
+                print(f"\n{cat.value.upper()}")
+                print("-" * len(cat.value))
+                for item in visible_items:
+                    print(item)
