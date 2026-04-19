@@ -24,7 +24,6 @@ class Menu:
         self.items.append(food_item)
 
     def display(self):
-        print("--- RESTAURANT MENU ---")
         for cat in Category:
             # Filter only available items
             visible_items = [
@@ -33,8 +32,7 @@ class Menu:
             ]
             
             if visible_items:
-                print(f"\n{cat.value.upper()}")
-                print("-" * len(cat.value))
+                print(f"\n--- {cat.value} ---")
                 for item in visible_items:
                     print(item)
     
@@ -55,3 +53,18 @@ class Menu:
         item = self.find_item(name)
         if item:
             item.is_available = status
+
+
+if __name__ == "__main__":
+    menu = Menu()
+
+    menu.add_item(Food("Salade César", 8, Category.STARTER, is_available=True))
+    menu.add_item(Food("Soupe du jour", 6, Category.STARTER, is_available=False))
+    menu.add_item(Food("Steak frites", 15, Category.MAIN, is_available=True))
+    menu.add_item(Food("Poisson grillé", 14, Category.MAIN, is_available=True))
+    menu.add_item(Food("Plat du chef", 18, Category.MAIN, is_available=False))
+    menu.add_item(Food("Tiramisu", 7, Category.DESSERT, is_available=True))
+    menu.add_item(Food("Glace", 5, Category.DESSERT, is_available=True))
+    menu.add_item(Food("Dessert mystère", 9, Category.DESSERT, is_available=False))
+
+    menu.display()

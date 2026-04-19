@@ -45,3 +45,23 @@ L'application est accessible sur [http://127.0.0.1:8000](http://127.0.0.1:8000)
 ```bash
 python manage.py test inventory
 ```
+
+---
+
+## Exercice 3
+
+Menu de restaurant avec gestion des plats, catégories et disponibilités.
+
+### Lancer le programme
+
+```bash
+cd exo3
+python exercice_3.py
+```
+
+### Lancer les tests
+
+```bash
+cd exo3
+python -m unittest test_exercice_3 -v
+```
